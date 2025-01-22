@@ -25,13 +25,13 @@ docker run -e BOT_TOKEN=$BOT_TOKEN rankedle
 - Poetry
 - FFMPEG
 
-#### Installation
+### Installation
 To install the dependencies simply run
 ```bash
 poetry install
 ```
 
-#### Running the bot
+### Running the bot
 Just execute tue `bot.py` file
 ```bash
 python3 ./src/rankedle/bot.py
