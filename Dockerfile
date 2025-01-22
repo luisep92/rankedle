@@ -1,29 +1,26 @@
 FROM python:3.11-slim
 
-# Establece variables de entorno para evitar problemas con Poetry
+# Avoid some problems
 ENV POETRY_VERSION=1.6.1 \
     POETRY_VIRTUALENVS_CREATE=false \
     PYTHONUNBUFFERED=1
 
-# Instala Poetry y dependencias del sistema
+# Install poetry/dependencies
+RUN apt-get update && apt-get install -y ffmpeg
 RUN apt-get update && apt-get install -y curl && \
     curl -sSL https://install.python-poetry.org | python3 - && \
     ln -s /root/.local/bin/poetry /usr/local/bin/poetry && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Define el directorio de trabajo dentro del contenedor
+# Setup the working directory
 WORKDIR /app
+
+# Copy and install dependencies
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-dev --no-root
-RUN apt-get update && apt-get install -y ffmpeg
 
-# Copia los archivos del proyecto
-
+# Copy project files
 COPY . .
 
-# Instala las dependencias del proyecto
-
-
-# Comando por defecto para ejecutar la aplicación
-
+# Run bot
 CMD ["python", "/app/src/rankedle/bot.py"]
