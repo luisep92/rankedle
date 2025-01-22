@@ -136,7 +136,7 @@ async def on_message(message):
     if message.channel.name != "rankedle":
         return
 
-    # Comandos simples
+    # Commands
     if message.content.startswith("!start"):
         await bot.start(message)
 
@@ -182,17 +182,15 @@ async def on_message(message):
             await bot.restart_contest(message)
         if message.content.startswith('!add'):
             args = message.content[len('!add'):].strip()
-            parts = args.split('"')[
-                1::2]  # Tomar solo las partes dentro de comillas
+            parts = args.split('"')[1::2]
 
-            # Validar que haya al menos 3 parámetros: nombres, autor, y URL
             if len(parts) < 3:
                 await message.channel.send(
                     "Error: Debes proporcionar al menos 1 nombres, un autor y una URL."
                 )
                 return
 
-            names = parts[:-2]  # Todos menos los dos últimos son nombres
+            names = parts[:-2]  # All but the last two are names
             author = parts[-2]
             url = parts[-1]
             song = song.Song(url=url, names=names, author=author)
