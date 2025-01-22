@@ -20,9 +20,11 @@ class BotState(Enum):
 
 class RankedleBot():
 
-    def __init__(self):
+    def __init__(self, config: Config):
+        self.token = config.get("bot", "token")
+        self.mods = config.get("bot", "mods")
+        self.permitted_channels = config.get("bot", "permitted_channels")
         self.song_selector = None
-        self.admins = admins
         self.state = BotState.IDLE
         self.used_clues = 0
         self.clue_crono = None
@@ -72,7 +74,7 @@ class RankedleBot():
 
     async def restart_contest(self, message):
         global bot
-        if message.author.name in admins:
+        if message.author.name in bot.mods:
             bot = RankedleBot()
             bot.song_selector = song.SongSelector()
             await bot.start_contest(message)
@@ -132,8 +134,8 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    # Work only in rankedle channel
-    if message.channel.name != "rankedle":
+    # Work only in valid channels
+    if message.channel.name not in bot.permitted_channels:
         return
 
     # Commands
@@ -171,7 +173,7 @@ async def on_message(message):
         """
         await message.channel.send(f"```{msg}```")
 
-    elif message.author.name in admins:
+    elif message.author.name in bot.mods:
         if message.content.startswith('!isra'):
             await message.channel.send('¡Rata de dos patas!')
         if message.content.startswith('!dimela'):
@@ -218,8 +220,6 @@ async def on_message(message):
 
 if __name__ == "__main__":
     config = Config()
-    token = config.get("bot", "token")
-    admins = config.get("bot", "mods")
 
-    bot = RankedleBot()
-    client.run(token)
+    bot = RankedleBot(config)
+    client.run(bot.token)

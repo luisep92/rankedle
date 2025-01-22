@@ -4,3 +4,5 @@ bot:
     - .deir
     - rexagain_
     - tikugato
+  permitted_channels:
+    - rankedle
