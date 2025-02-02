@@ -1,5 +1,7 @@
 FROM python:3.11-slim
 
+WORKDIR /app
+
 # Avoid some problems
 ENV POETRY_VERSION=1.6.1 \
     POETRY_VIRTUALENVS_CREATE=false \
@@ -17,10 +19,16 @@ WORKDIR /app
 
 # Copy and install dependencies
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-dev --no-root
+RUN poetry install --only web --no-root
 
 # Copy project files
-COPY . .
+COPY ./src/web .
 
-# Run bot
-CMD ["python", "/app/src/rankedle/bot.py"]
+# Expose port 8000
+EXPOSE 8000
+
+# Set entrypoint to run initial actions
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Run webserver
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

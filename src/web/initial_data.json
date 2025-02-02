@@ -1,0 +1,133 @@
+[
+{
+    "model": "SongManager.map",
+    "pk": "asd",
+    "fields": {
+        "duration": 123,
+        "name": "thdfg",
+        "subname": "asd",
+        "author": "gbfd",
+        "mapper": "asd",
+        "upload_date": "2025-01-27",
+        "download_url": "gsdf",
+        "cover_url": "gsdf"
+    }
+},
+{
+    "model": "SongManager.map",
+    "pk": "fff",
+    "fields": {
+        "duration": 2,
+        "name": "aa",
+        "subname": "aa",
+        "author": "aa",
+        "mapper": "aa",
+        "upload_date": "2025-01-27",
+        "download_url": "aa",
+        "cover_url": "aa"
+    }
+},
+{
+    "model": "SongManager.difficulty",
+    "pk": 1,
+    "fields": {
+        "name": "Easy"
+    }
+},
+{
+    "model": "SongManager.difficulty",
+    "pk": 2,
+    "fields": {
+        "name": "Normal"
+    }
+},
+{
+    "model": "SongManager.difficulty",
+    "pk": 3,
+    "fields": {
+        "name": "Hard"
+    }
+},
+{
+    "model": "SongManager.difficulty",
+    "pk": 4,
+    "fields": {
+        "name": "Expert"
+    }
+},
+{
+    "model": "SongManager.difficulty",
+    "pk": 5,
+    "fields": {
+        "name": "ExpertPlus"
+    }
+},
+{
+    "model": "SongManager.permittedname",
+    "pk": 20,
+    "fields": {
+        "map": "asd",
+        "name": "123a"
+    }
+},
+{
+    "model": "SongManager.permittedname",
+    "pk": 21,
+    "fields": {
+        "map": "asd",
+        "name": "123b"
+    }
+},
+{
+    "model": "SongManager.permittedname",
+    "pk": 22,
+    "fields": {
+        "map": "fff",
+        "name": "hh"
+    }
+},
+{
+    "model": "SongManager.permittedname",
+    "pk": 23,
+    "fields": {
+        "map": "fff",
+        "name": "kk"
+    }
+},
+{
+    "model": "SongManager.mapdifficulty",
+    "pk": 67,
+    "fields": {
+        "map": "asd",
+        "difficulty": 2,
+        "stars": "3.75"
+    }
+},
+{
+    "model": "SongManager.mapdifficulty",
+    "pk": 68,
+    "fields": {
+        "map": "asd",
+        "difficulty": 5,
+        "stars": "11.70"
+    }
+},
+{
+    "model": "SongManager.mapdifficulty",
+    "pk": 69,
+    "fields": {
+        "map": "fff",
+        "difficulty": 1,
+        "stars": "1.00"
+    }
+},
+{
+    "model": "SongManager.mapdifficulty",
+    "pk": 70,
+    "fields": {
+        "map": "fff",
+        "difficulty": 5,
+        "stars": "2.00"
+    }
+}
+]
