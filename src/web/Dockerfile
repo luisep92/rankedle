@@ -21,13 +21,14 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --only web --no-root
 
-# Copia el código de Django
+# Copy project files
 COPY ./src/web .
 
-# Expón el puerto 8000
+# Expose port 8000
 EXPOSE 8000
 
-
-# Comando para ejecutar Django
+# Set entrypoint to run initial actions
 ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Run webserver
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

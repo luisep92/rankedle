@@ -23,4 +23,4 @@ RUN poetry install --only bot --no-root
 COPY ./src/rankedle .
 
 # Run bot
-CMD ["python", "/app/src/rankedle/bot.py"]
+CMD ["python", "/app/bot.py"]
