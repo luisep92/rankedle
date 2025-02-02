@@ -20,7 +20,7 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-dev --no-root
 
 # Copy project files
-COPY . .
+COPY ./src/rankedle .
 
 # Run bot
 CMD ["python", "/app/src/rankedle/bot.py"]
