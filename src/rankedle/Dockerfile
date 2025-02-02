@@ -17,7 +17,7 @@ WORKDIR /app
 
 # Copy and install dependencies
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-dev --no-root
+RUN poetry install --only bot --no-root
 
 # Copy project files
 COPY ./src/rankedle .

@@ -19,7 +19,7 @@ WORKDIR /app
 
 # Copy and install dependencies
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-dev --no-root
+RUN poetry install --only web --no-root
 
 # Copia el código de Django
 COPY ./src/web .

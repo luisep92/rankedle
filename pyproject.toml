@@ -6,15 +6,16 @@ authors = ["Luis Escolano <luis@escolano.es>"]
 readme = "README.md"
 packages = [{include = "rankedle", from = "src"}]
 
-[tool.poetry.dependencies]
-python = "^3.10"
+[tool.poetry.group.bot.dependencies]
+python = "^3.11"
 discord = "^2.3.2"
 asyncio = "^3.4.3"
 pydub = "^0.25.1"
 pyyaml = "^6.0.2"
 yt-dlp = "^2025.1.15"
-django = "^5.1.5"
 
+[tool.poetry.group.web.dependencies]
+django = "^5.1.5"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
