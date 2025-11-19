@@ -1,5 +1,20 @@
 ## BOT RANKEDLE
 
+### What is Rankedle?
+
+Rankedle is a Discord bot + Django backend designed to run a "guess the song" game using content from BeatSaver.  
+It is built as a real application, not a script: the bot handles the interactive flow while Django provides storage, administration and logic abstraction.
+
+This project was an opportunity to build a complete product with:
+
+- A Discord bot handling real-time commands and game state
+- A Django backend with SQLite and ORM models
+- A clean interface between "game logic" and "data management"
+- Automated deployment using Docker and Poetry
+
+The goal was to design something maintainable and extensible, not just "make a bot run". The abstractions allow replacing the backend logic without touching the Discord layer, and the admin panel provides a friendly way to manage maps, users and permissions.
+
+
 ### Requirements
 - You **must** provide a `.env` file at the root path of the project. This file must contain at least
 ```bash
@@ -84,3 +99,13 @@ A file named `songs_to_add.json` is provided. This file contains the data direct
 In the admin panel, you should be able to go to the `Maps` section, and press `Add`.
 
 This will lead you to the map insertion page. This page is automatically filled with the information of the next map from the `songs_to_add.json` file, which is not inserted in the database. Make sure that the information is correct, and add the permitted names if necessary, then just press add and the work should be done.
+
+#### Lesson learned
+This project taught me a valuable lesson: avoid overengineering when a simpler solution solves the real problem.
+
+I initially tried to implement perfect matching for Beat Saber song titles (handling strange Unicode, multiple variants, special characters, etc.). In practice, this complexity wasn’t necessary.
+
+A colleague later replaced the system with a simple string-distance matching approach. It is imperfect but “good enough” and dramatically simpler.
+
+Real users preferred a simpler system that worked consistently to a perfect one that required constant maintenance.
+
