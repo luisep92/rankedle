@@ -1,111 +1,96 @@
-## BOT RANKEDLE
+# Rankedle
 
-### What is Rankedle?
+A Discord "guess the song" game using [BeatSaver](https://beatsaver.com) content. **The Día de los Inocentes prank shipped — the over-engineered rewrite did not.** This README tells both, because the second story is the lesson.
 
-Rankedle is a Discord bot + Django backend designed to run a "guess the song" game using content from BeatSaver.  
-It is built as a real application, not a script: the bot handles the interactive flow while Django provides storage, administration and logic abstraction.
+---
 
-This project was an opportunity to build a complete product with:
+## Two versions, only one of which made it
 
-- A Discord bot handling real-time commands and game state
-- A Django backend with SQLite and ORM models
-- A clean interface between "game logic" and "data management"
+**December 28th 2024 — the prank that worked.** A small Discord bot that picked random Beat Saber songs and ran a "guess the title" loop. Maps and answers came from JSON files. No database, no admin panel, no containers. It ran for the day, did its job, and turned off — which is what was asked of it.
+
+**January 2025 — the implementation that didn't.** A few weeks later someone in the community asked if it could become a persistent thing — admin panel, scoring, user history, deployable. I said yes and started this Django + Docker rewrite, which is what's in this repo. SQLite + ORM models, a Django admin for managing maps and permitted-name aliases, Poetry, multi-container Docker Compose, REST API. It works. It never got deployed.
+
+**What's actually in production today.** A colleague added Beat Saber title guessing to their own community bot using simple **string-distance matching** — no Django, no container, no admin panel. Slightly worse matching results than this version would have produced. Has been running continuously for over a year.
+
+---
+
+## What is Rankedle (the Django version)
+
+A Discord bot + Django backend designed to run a "guess the song" game on top of BeatSaver content. The bot handles the interactive flow; Django provides storage, an admin panel for managing maps and permitted-name aliases, and (later) a REST API.
+
+Architecture:
+
+- A Discord bot handling real-time commands and game state (`src/rankedle/`)
+- A Django backend with SQLite and ORM models (`src/web/`)
+- A clean interface between "game logic" and "data management" — the bot talks to the backend through a thin layer; the backend can be replaced without touching Discord
 - Automated deployment using Docker and Poetry
 
-The goal was to design something maintainable and extensible, not just "make a bot run". The abstractions allow replacing the backend logic without touching the Discord layer, and the admin panel provides a friendly way to manage maps, users and permissions.
+---
 
+## Lesson learned
 
-### Requirements
-- You **must** provide a `.env` file at the root path of the project. This file must contain at least
+Avoid overengineering when a simpler solution solves the real problem.
+
+The clearest evidence in this repo is `src/web/SongManager/admin.py`: **five factory functions that return a class** — `BaseMapDifficultyFormSetWithParams`, `BasePermittedNameFormsetWithParams`, `MapDifficultyInLineWithParam`, `PermittedNameInlineWithParam`, `MapAdminFormWithParam`. Same shape every time. Django's admin classes are declarative and don't natively accept runtime parameters, but I needed runtime data (the next map from `songs_to_add.json`) to seed initial values in the form, so the workaround is to wrap each admin class in a factory function that closes over the data and returns the class with the params baked in. It works. It is also the kind of thing you write when the requirement could have been satisfied with much less.
+
+The colleague's string-distance bot does what users actually wanted: tell them whether they got a song name right with reasonable tolerance. That is the entire requirement. Everything past that — admin panels, ORM, REST API, Docker — was me building a product nobody asked to maintain.
+
+Real users preferred a simpler system that worked consistently to a perfect one that needed maintenance.
+
+---
+
+## Requirements
+
+You **must** provide a `.env` file at the project root containing at least:
+
 ```bash
 BOT_TOKEN=YOUR_BOT_TOKEN
 DJANGO_ADMIN=SUPERADMIN_USER
 DJANGO_PASSWORD=SUPERADMIN_PASSWORD
 ```
-### Run in Docker
-#### Requirements
-- Docker
-- Docker-compose
 
-#### Running the containers
-Once you have prepared your `.env` file, simply run
+## Run in Docker
+
+Needs Docker and Docker Compose. Once your `.env` file is in place:
+
 ```bash
 docker-compose up
 ```
-*Note that you will need admin rights to run this command.*
 
-### For DEVs
+*Admin rights needed for this command.*
 
-### Run without container
-#### Requirements
-- Poetry
-- FFMPEG
+## Run without container (for devs)
 
-#### Dependencies
-To install the dependencies simply run
+Needs Poetry and FFMPEG.
+
 ```bash
 poetry install
 ```
 
-#### Introduction
-The project contains two separate parts: the discord bot and the django web server.
+The project contains two parts: the Discord bot and the Django webserver. The bot manages callbacks and Discord logic but abstracts an interface for how maps/users/etc. are managed, so you can implement your own behaviour on these. The webserver holds a SQLite database for the information about maps, users, scores.
 
-The discord bot manages the callbacks and discord logic but abstracts an interface that manages how the maps/users/... are managed, so you can implement your own behavior on these.
+### Discord bot
 
-The django webserver contains a SQLite database to manage the information about the maps, users, etc.
-
-
-#### Discord bot
-
-##### Running the bot
-Just execute the `bot.py` file
 ```bash
 python3 ./src/rankedle/bot.py
 ```
 
-##### Usage
-Before running the bot, don't forget to check the config file `config.yaml`.
+Before running, check the config file `src/rankedle/config.yaml`. Once running, a **mod** sends `!start` in a permitted channel — the bot prints `!help` and starts downloading and guessing songs.
 
-When the bot is already running, a **mod** shall send the `!start` command in a **permitted channel**. Inmediately, the bot will prompt a message containing the `!help` command, and it will start to download and star guessing songs.
+### Django webserver
 
+No database file is provided, so the first run generates `db.sqlite3` and seeds it from `initial_data.json`.
 
-#### Django webserver
-No database file is provided in the project so with the first run of django, a db.sqlite3 is going to be generated. 
-
-Not to make things complicated, you can just run
 ```bash
 cd src/web/
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
-```
-
-With the first migration, the database should have been generated, and the `initial_data.json` will be inserted in the database.
-
-*Don't forget you will need a super user to manage the data in the admin panel*
-
-##### Run the webserver
-Once the initial steps are done, you can run the server
-```bash
 python manage.py runserver
 ```
 
-Now you should be able to enter the admin panel through ***127.0.0.1:8000/admin***
+The admin panel is at `127.0.0.1:8000/admin`. You'll need that superuser to manage data there.
 
+### Adding maps
 
-#### Adding maps
-A file named `songs_to_add.json` is provided. This file contains the data directly pulled from beatsaver.
-
-In the admin panel, you should be able to go to the `Maps` section, and press `Add`.
-
-This will lead you to the map insertion page. This page is automatically filled with the information of the next map from the `songs_to_add.json` file, which is not inserted in the database. Make sure that the information is correct, and add the permitted names if necessary, then just press add and the work should be done.
-
-#### Lesson learned
-This project taught me a valuable lesson: avoid overengineering when a simpler solution solves the real problem.
-
-I initially tried to implement perfect matching for Beat Saber song titles (handling strange Unicode, multiple variants, special characters, etc.). In practice, this complexity wasn’t necessary.
-
-A colleague later replaced the system with a simple string-distance matching approach. It is imperfect but “good enough” and dramatically simpler.
-
-Real users preferred a simpler system that worked consistently to a perfect one that required constant maintenance.
-
+`src/web/SongManager/songs_to_add.json` contains data pulled directly from BeatSaver. In the admin panel, go to `Maps → Add` — the page is auto-filled with the next map from the JSON queue (this is what the factory-function admin classes are for). Verify the information, add permitted-name aliases if needed, and save.
